@@ -1,0 +1,144 @@
+
+class Cd { // represents a CD disk
+
+private:
+	char *performers;
+	char *label;
+	int selections; // number of selections
+	double playtime; // playing time in minutes
+
+public:
+	Cd(const char * s1, const char * s2,const  int n,const double x) 
+	{
+		performers = new char[strlen(s1) + 1];
+		strcpy_s(performers, strlen(s1)+1,s1);
+
+		label = new char[strlen(s2) + 1];
+		strcpy_s(label,strlen(s2)+1, s2);
+
+		selections = n;
+		playtime = x;
+	}
+	Cd(const Cd & d) 
+	{
+		performers = new char[strlen(d.performers) + 1];
+		strcpy_s(performers,strlen(d.performers)+1, d.performers);
+
+		label = new char[strlen(d.label) + 1];
+		strcpy_s(label,strlen(d.label)+1,d.label);
+
+		selections = d.selections;
+		playtime = d.playtime;
+	}
+	Cd() 
+	{
+		performers = new char[1];
+		label = new char[1];
+	}
+	virtual	~Cd() 
+	{
+		delete[] performers;
+		delete[] label;
+	}
+	virtual	void Report() const 
+	{
+		using std::cout;
+		cout << "Performers :" << performers << "\n"
+			<< "Label :" << label << "\n"
+			<< "Selections :" << selections << "\n"
+			<< "Playtime :" << playtime << "\n";
+	} 
+	Cd & operator=(const Cd & d) 
+	{
+		if (this == &d)return *this;
+		delete[] label;
+		label = new char[strlen(d.label) + 1];
+		strcpy_s(label, strlen(d.label)+1, d.label);
+
+		delete[] performers;
+		performers = new char[strlen(d.performers) + 1];
+		strcpy_s(performers, strlen(d.performers) + 1, d.performers);
+
+		selections = d.selections;
+		playtime = d.playtime;
+		return *this;
+	}
+};
+
+class Classic :public Cd
+{
+public:
+	Classic(const char *wrk,const char * s1, const char * s2, const  int n, const double x) : Cd(s1,s2,n,x)
+	{
+		work = new char[std::strlen(wrk) + 1];
+		strcpy_s(work,strlen(wrk)+1, wrk);
+
+	}
+	Classic(const Cd & cd, const char *wrk) :Cd(cd) 
+	{
+		work = new char[std::strlen(wrk) + 1];
+		strcpy_s(work,strlen(wrk)+1, wrk);
+	}
+	Classic() {
+		work = new char[1];
+		work = '\0';
+	}
+	Classic(const Classic & Clsic) : Cd(Clsic) 
+	{
+		work = new char[std::strlen(Clsic.work) + 1];
+		strcpy_s(work, strlen(Clsic.work)+1, Clsic.work);
+
+		}
+	virtual	~Classic() { delete[] work; }
+	virtual void Report() const 
+	{
+		using std::cout;
+		this->Cd::Report();
+		cout << "Work :" << work<<"\n";
+	}
+	const Classic & operator=(const Classic & as) 
+	{
+		if (this == &as)return *this;
+		
+		Cd::operator=(as);
+		delete[] work;
+
+		
+		work = new char[strlen(as.work) + 1];
+		strcpy_s(work, strlen(as.work)+1,as.work);
+		
+
+		return *this;
+	}
+private:
+	char *work;
+};
+
+
+void Bravo(const Cd & disk);
+	int main()
+	{
+		using std::cout;
+		Cd c1("Beatles", "Capitol", 14, 35.5);
+		Classic c2("Piano Sonata in B flat, Fantasia in C",
+			"Alfred Brendel", "Philips", 2, 57.17);
+
+		Cd *pcd = &c1;
+		c1.Report(); // use Cd method
+		c2.Report(); // use Classic method
+		pcd->Report(); // use Cd method for cd object
+		pcd = &c2;
+		pcd->Report(); // use Classic method for classic object
+		Bravo(c1);
+		Bravo(c2);
+		Classic copy;
+		copy = c2;
+		copy.Report();
+	
+		system("pause");
+}
+
+void Bravo(const Cd & disk) 
+{
+	disk.Report();
+}
